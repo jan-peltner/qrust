@@ -8,11 +8,11 @@ use ratatui::prelude::*;
 use ratatui::Terminal;
 use std::error::Error;
 use std::io;
-use view::compute_ui;
+use ui::compute_ui;
 
 mod app;
 mod events;
-mod view;
+mod ui;
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut AppState) -> io::Result<()> {
     loop {

@@ -12,7 +12,7 @@ pub fn handle_events(app: &mut AppState) -> bool {
         match key.code {
             KeyCode::Char(char) => {
                 if key.modifiers == KeyModifiers::CONTROL && char == 'd' {
-                    app.query.clear_query();
+                    app.query.clear();
                     return false;
                 }
                 if key.modifiers == KeyModifiers::CONTROL && (char == 'q' || char == 'c') {
@@ -22,10 +22,11 @@ pub fn handle_events(app: &mut AppState) -> bool {
                     app.toggle_ui_mode();
                     return false;
                 }
+                app.query.append(char);
             }
 
             KeyCode::Backspace => {
-                app.query.pop_from_query();
+                app.query.pop();
                 return false;
             }
 

@@ -32,15 +32,15 @@ pub struct Query {
 }
 
 impl Query {
-    pub fn append_to_query(&mut self, c: char) {
+    pub fn append(&mut self, c: char) {
         self.url.push(c);
     }
 
-    pub fn pop_from_query(&mut self) {
+    pub fn pop(&mut self) {
         self.url.pop();
     }
 
-    pub fn clear_query(&mut self) {
+    pub fn clear(&mut self) {
         self.url.clear();
     }
 }
