@@ -1,3 +1,17 @@
+pub enum UiMode {
+    NORMAL,
+    EDITING,
+}
+
+impl UiMode {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            UiMode::NORMAL => "SELECT",
+            UiMode::EDITING => "EDIT",
+        }
+    }
+}
+
 pub enum HttpVerb {
     POST,
     GET,
@@ -32,6 +46,7 @@ impl Query {
 }
 
 pub struct AppState {
+    pub mode: UiMode,
     pub query: Query,
     pub response: Option<String>,
 }
@@ -41,6 +56,7 @@ impl AppState {
     pub fn init(http_verb: Option<HttpVerb>) -> Self {
         if let Some(verb) = http_verb {
             AppState {
+                mode: UiMode::NORMAL,
                 query: Query {
                     url: String::new(),
                     verb,
@@ -50,6 +66,7 @@ impl AppState {
             }
         } else {
             AppState {
+                mode: UiMode::NORMAL,
                 query: Query {
                     url: String::new(),
                     verb: HttpVerb::GET,
@@ -57,6 +74,13 @@ impl AppState {
                 },
                 response: None,
             }
+        }
+    }
+
+    pub fn toggle_ui_mode(&mut self) {
+        match self.mode {
+            UiMode::EDITING => self.mode = UiMode::NORMAL,
+            UiMode::NORMAL => self.mode = UiMode::EDITING,
         }
     }
 }

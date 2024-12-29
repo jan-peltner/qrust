@@ -18,7 +18,10 @@ pub fn handle_events(app: &mut AppState) -> bool {
                 if key.modifiers == KeyModifiers::CONTROL && (char == 'q' || char == 'c') {
                     return true;
                 }
-                app.query.append_to_query(char);
+                if key.modifiers == KeyModifiers::CONTROL && char == 'e' {
+                    app.toggle_ui_mode();
+                    return false;
+                }
             }
 
             KeyCode::Backspace => {
