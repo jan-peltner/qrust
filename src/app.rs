@@ -1,25 +1,62 @@
-pub struct AppState {
-    pub query_url: String,
-    pub res: Option<String>,
+pub enum HttpVerb {
+    POST,
+    GET,
+    PUT,
+    DELETE,
+    PATCH,
 }
 
-impl AppState {
-    pub fn init() -> Self {
-        Self {
-            query_url: String::new(),
-            res: None,
-        }
-    }
+pub struct Param {
+    key: String,
+    value: String,
+}
 
+pub struct Query {
+    pub url: String,
+    pub verb: HttpVerb,
+    pub params: Option<Vec<Param>>,
+}
+
+impl Query {
     pub fn append_to_query(&mut self, c: char) {
-        self.query_url.push(c);
+        self.url.push(c);
     }
 
     pub fn pop_from_query(&mut self) {
-        self.query_url.pop();
+        self.url.pop();
     }
 
     pub fn clear_query(&mut self) {
-        self.query_url.clear();
+        self.url.clear();
+    }
+}
+
+pub struct AppState {
+    pub query: Query,
+    pub response: Option<String>,
+}
+
+impl AppState {
+    /// Initializes the app state
+    pub fn init(http_verb: Option<HttpVerb>) -> Self {
+        if let Some(verb) = http_verb {
+            AppState {
+                query: Query {
+                    url: String::new(),
+                    verb,
+                    params: None,
+                },
+                response: None,
+            }
+        } else {
+            AppState {
+                query: Query {
+                    url: String::new(),
+                    verb: HttpVerb::GET,
+                    params: None,
+                },
+                response: None,
+            }
+        }
     }
 }

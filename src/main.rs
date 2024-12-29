@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     // start app and execute render loop
-    let mut app = AppState::init();
+    let mut app = AppState::init(None);
     let _ = run_app(&mut terminal, &mut app);
 
     // clean up after app is done
