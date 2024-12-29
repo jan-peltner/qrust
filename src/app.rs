@@ -1,10 +1,14 @@
+pub trait AsStaticStr {
+    fn as_static_str(&self) -> &'static str;
+}
+
 pub enum UiMode {
     NORMAL,
     EDITING,
 }
 
-impl UiMode {
-    pub fn as_str(&self) -> &'static str {
+impl AsStaticStr for UiMode {
+    fn as_static_str(&self) -> &'static str {
         match self {
             UiMode::NORMAL => "SELECT",
             UiMode::EDITING => "EDIT",
@@ -18,6 +22,18 @@ pub enum HttpVerb {
     PUT,
     DELETE,
     PATCH,
+}
+
+impl AsStaticStr for HttpVerb {
+    fn as_static_str(&self) -> &'static str {
+        match self {
+            HttpVerb::POST => "POST",
+            HttpVerb::GET => "GET",
+            HttpVerb::PUT => "PUT",
+            HttpVerb::DELETE => "DELETE",
+            HttpVerb::PATCH => "PATCH",
+        }
+    }
 }
 
 pub struct Param {

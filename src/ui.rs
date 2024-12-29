@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::AppState;
+use crate::{app::AsStaticStr, AppState};
 
 pub fn compute_ui(frame: &mut Frame, app: &AppState) {
     let viewport_chunks = Layout::default()
@@ -33,7 +33,7 @@ pub fn compute_ui(frame: &mut Frame, app: &AppState) {
     let footer_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(vec![
-            Constraint::Length(app.mode.as_str().len() as u16 + 6),
+            Constraint::Length(app.mode.as_static_str().len() as u16 + 6),
             Constraint::Fill(1),
         ])
         .split(*viewport_chunks.last().unwrap());
@@ -53,7 +53,7 @@ pub fn compute_ui(frame: &mut Frame, app: &AppState) {
 
     let footer_left = Line::from(vec![
         Span::raw("Mode: "),
-        Span::raw(app.mode.as_str()).bold(),
+        Span::raw(app.mode.as_static_str()).bold(),
     ])
     .red()
     .on_white();
