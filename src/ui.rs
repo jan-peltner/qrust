@@ -48,7 +48,7 @@ pub fn compute_ui(frame: &mut Frame, app: &AppState) {
     let query_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default());
-    let query = Paragraph::new(Span::raw(&app.query.url)).block(query_block);
+    let query = Paragraph::new(Span::raw(app.query.url.as_str())).block(query_block);
     let query_label = Paragraph::new(Span::raw("Query:"));
 
     let footer_left = Line::from(vec![

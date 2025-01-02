@@ -6,13 +6,35 @@ use ratatui::crossterm::terminal::{
 };
 use ratatui::prelude::*;
 use ratatui::Terminal;
+use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
+use serde::Deserialize;
+use std::collections::HashMap;
 use std::error::Error;
-use std::io;
+use std::fs::read_to_string;
+use std::path::Path;
+use std::{env, io};
 use ui::compute_ui;
 
 mod app;
 mod events;
 mod ui;
+
+#[derive(Deserialize)]
+struct Config {
+    name: String,
+    endpoint: String,
+    headers: HashMap<String, String>,
+}
+
+impl Config {
+    fn to_header_map(&self) -> Result<HeaderMap, Box<dyn Error>> {
+        let mut header_map = HeaderMap::new();
+        for (k, v) in self.headers.iter() {
+            header_map.try_insert(HeaderName::try_from(k)?, HeaderValue::try_from(v)?)?;
+        }
+        Ok(header_map)
+    }
+}
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut AppState) -> io::Result<()> {
     loop {
@@ -31,8 +53,20 @@ fn main() -> Result<(), Box<dyn Error>> {
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
 
+    // parse qrust config
+    let cfg = read_to_string(format!(
+        "{}/.config/qrust/workspace.json",
+        env::var("HOME").unwrap()
+    ))?;
+    let parsed_cfg = serde_json::from_str::<Config>(&cfg)?;
+
     // start app and execute render loop
-    let mut app = AppState::init(None);
+    let mut app = AppState::init(
+        parsed_cfg.to_header_map()?,
+        parsed_cfg.endpoint,
+        parsed_cfg.name,
+    )?;
+
     let _ = run_app(&mut terminal, &mut app);
 
     // clean up after app is done

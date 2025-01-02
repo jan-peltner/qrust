@@ -11,30 +11,17 @@ pub fn handle_events(app: &mut AppState) -> bool {
 
         match key.code {
             KeyCode::Char(char) => {
-                if key.modifiers == KeyModifiers::CONTROL && char == 'd' {
-                    app.query.clear();
-                    return false;
-                }
                 if key.modifiers == KeyModifiers::CONTROL && (char == 'q' || char == 'c') {
                     return true;
                 }
-                if key.modifiers == KeyModifiers::CONTROL && char == 'e' {
-                    app.toggle_ui_mode();
-                    return false;
-                }
-                app.query.append(char);
             }
 
             KeyCode::Backspace => {
-                app.query.pop();
                 return false;
             }
 
             KeyCode::Enter => {
                 // TODO: Implement logic to handle request
-                if app.query.url.len() == 0 {
-                    return true;
-                }
                 return false;
             }
 
