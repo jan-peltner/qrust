@@ -50,6 +50,17 @@ fn render_app_scaffold(viewport: Rc<[Rect]>, frame: &mut Frame, app: &AppState) 
         ])
         .split(header);
 
+    let title_center_block = Block::default().style(Style::default().bg(Color::White));
+    let title_center = Paragraph::new(Span::raw("Postr").red().bold().underlined())
+        .block(title_center_block)
+        .alignment(Alignment::Center);
+    let title_top = Block::default().on_white();
+    let title_bottom = Block::default().on_white();
+
+    frame.render_widget(title_top, title_chunks[0]);
+    frame.render_widget(title_center, title_chunks[1]);
+    frame.render_widget(title_bottom, title_chunks[2]);
+
     let footer_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(vec![
@@ -57,17 +68,6 @@ fn render_app_scaffold(viewport: Rc<[Rect]>, frame: &mut Frame, app: &AppState) 
             Constraint::Fill(1),
         ])
         .split(footer);
-
-    let title_center_block = Block::default().style(Style::default().bg(Color::White));
-    let title_center = Paragraph::new(Span::raw("Postr").red().bold().underlined())
-        .block(title_center_block)
-        .alignment(Alignment::Center);
-    let title_left = Block::default().on_white();
-    let title_right = Block::default().on_white();
-
-    frame.render_widget(title_left, title_chunks[0]);
-    frame.render_widget(title_center, title_chunks[1]);
-    frame.render_widget(title_right, title_chunks[2]);
 
     let footer_left = Line::from(vec![
         Span::raw("Mode: "),
