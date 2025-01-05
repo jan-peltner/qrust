@@ -51,7 +51,7 @@ fn render_app_scaffold(viewport: Rc<[Rect]>, frame: &mut Frame, app: &AppState) 
         .split(header);
 
     let title_top_block = Block::default().style(Style::default().bg(Color::White));
-    let title_top = Paragraph::new(Span::raw("Postr").red().bold().underlined())
+    let title_top = Paragraph::new(Span::raw("Qrust").red().bold().underlined())
         .block(title_top_block)
         .alignment(Alignment::Center);
 
