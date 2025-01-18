@@ -16,6 +16,7 @@ use std::error::Error;
 use std::fs::read_to_string;
 use std::future::Future;
 use std::pin::Pin;
+use std::task::Poll;
 use std::time::Duration;
 use std::{env, io};
 use ui::compute_ui;
@@ -49,6 +50,7 @@ async fn run_app<B: Backend>(
 ) -> io::Result<()> {
     let mut maybe_request: Option<Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>> =
         None;
+
     loop {
         terminal.draw(|f| compute_ui(f, app))?;
         if let Some(req) = handle_events(app, &gql_client).await {
@@ -56,17 +58,14 @@ async fn run_app<B: Backend>(
         }
 
         if let Some(ref mut req) = maybe_request {
-            tokio::select! {
-                result = req => {
-                    if result.is_ok() {
-                        // handle successful response
-                        todo!()
-                    } else {
-                        // handle failed response
-                        todo!()
-                    }
+            if let Poll::Ready(result) = futures::poll!(req) {
+                if result.is_ok() {
+                    // handle successful response
+                    todo!()
+                } else {
+                    // handle failed response
+                    todo!()
                 }
-                _ = tokio::time::sleep(Duration::from_millis(50)) => {}
             }
         }
 
