@@ -20,32 +20,27 @@ impl AsStaticStr for UiMode {
     }
 }
 
-pub struct Query {
-    pub url: Url,
-    pub headers: HeaderMap,
-}
-
-pub struct AppState {
-    pub name: String,
+pub struct AppState<'a> {
+    pub name: &'a str,
     pub mode: UiMode,
-    pub query: Query,
+    pub query: String,
     pub response: Option<String>,
+    pub should_quit: bool,
 }
 
-impl AppState {
+impl<'a> AppState<'a> {
     /// Initializes the app state
-    pub fn init(headers: HeaderMap, endpoint: String, name: String) -> Result<Self, ParseError> {
+    pub fn init(name: &'a str) -> Result<Self, ParseError> {
         Ok(Self {
             name,
             mode: UiMode::NORMAL,
-            query: Query {
-                url: Url::parse(&endpoint)?,
-                headers,
-            },
+            query: String::default(),
             response: None,
+            should_quit: false,
         })
     }
 
+    /// Toggle UI between NORMAL and INSERT mode
     pub fn toggle_ui_mode(&mut self) {
         match self.mode {
             UiMode::INSERT => self.mode = UiMode::NORMAL,

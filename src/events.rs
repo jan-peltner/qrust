@@ -1,34 +1,33 @@
+use std::{future::Future, pin::Pin};
+
 use ratatui::crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
+use reqwest::Response;
 
-use crate::app::AppState;
+use crate::{app::AppState, client::GqlClient};
 
-/// Handles key events events and returns true if the app should exit
-pub fn handle_events(app: &mut AppState) -> bool {
+pub async fn handle_events(
+    app: &mut AppState<'_>,
+    client: &GqlClient<'_>,
+) -> Option<Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>> {
     if let Ok(Event::Key(key)) = event::read() {
         if key.kind == KeyEventKind::Release {
-            return false;
+            return None;
         }
-
         match key.code {
             KeyCode::Char(char) => {
                 if key.modifiers == KeyModifiers::CONTROL && (char == 'q' || char == 'c') {
-                    return true;
+                    app.should_quit = true;
+                    return None;
                 }
             }
-
-            KeyCode::Backspace => {
-                return false;
-            }
-
+            KeyCode::Backspace => {}
             KeyCode::Enter => {
-                // TODO: Implement logic to handle request
-                return false;
+                if let Ok(request) = client.build_request(app.query.as_str()) {
+                    return Some(Box::pin(request.send()));
+                }
             }
-
-            _ => {
-                return false;
-            }
+            _ => {}
         };
     }
-    return false;
+    return None;
 }
