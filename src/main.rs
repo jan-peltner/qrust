@@ -97,7 +97,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // start app and execute render loop
     let mut app = AppState::init(&parsed_cfg.name)?;
 
-    let _ = run_app(&mut terminal, &mut app, gql_client);
+    let _ = run_app(&mut terminal, &mut app, gql_client).await;
 
     // clean up after app is done
     // this is run even if `run_app` returns an error
