@@ -53,7 +53,7 @@ async fn run_app<B: Backend>(
 
     loop {
         terminal.draw(|f| compute_ui(f, app))?;
-        if let Some(req) = handle_events(app, &gql_client).await {
+        if let Some(req) = handle_events(app, &gql_client) {
             maybe_request = Some(req);
         }
 

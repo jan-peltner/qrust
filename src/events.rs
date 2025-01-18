@@ -5,7 +5,7 @@ use reqwest::Response;
 
 use crate::{app::AppState, client::GqlClient};
 
-pub async fn handle_events(
+pub fn handle_events(
     app: &mut AppState<'_>,
     client: &GqlClient<'_>,
 ) -> Option<Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>> {
