@@ -1,0 +1,5 @@
+{
+	"name": "SpaceX",
+	"endpoint": "https://spacex-production.up.railway.app",
+	"headers": {}
+}
