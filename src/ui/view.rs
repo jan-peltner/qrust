@@ -2,8 +2,9 @@ use std::rc::Rc;
 
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
-    widgets::Block,
+    style::{Color, Style, Stylize},
+    text::Text,
+    widgets::{Block, Paragraph},
     Frame,
 };
 
@@ -23,6 +24,7 @@ pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
             Color::White
         }));
 
+    let query_editor = Paragraph::new(Text::raw(&app.query).white()).block(query_editor_block);
     let response_view_block = Block::bordered()
         .border_type(ratatui::widgets::BorderType::Rounded)
         .style(Style::default().fg(if app.focus == Focus::ResponseView {
@@ -31,6 +33,6 @@ pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
             Color::White
         }));
 
-    frame.render_widget(query_editor_block, main_chunks[0]);
+    frame.render_widget(query_editor, main_chunks[0]);
     frame.render_widget(response_view_block, main_chunks[1]);
 }

@@ -46,4 +46,8 @@ impl<'a> AppState<'a> {
             Focus::ResponseView => self.focus = Focus::QueryEditor,
         }
     }
+
+    pub fn set_query(&mut self, input: String) {
+        self.query = input;
+    }
 }

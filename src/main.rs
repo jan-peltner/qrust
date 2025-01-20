@@ -59,11 +59,9 @@ async fn run_app<B: Backend>(
         if let Some(ref mut req) = maybe_request {
             if let Poll::Ready(result) = futures::poll!(req) {
                 if result.is_ok() {
-                    // handle successful response
-                    todo!()
+                    todo!("handle successful request")
                 } else {
-                    // handle failed response
-                    todo!()
+                    todo!("handle failed request")
                 }
             }
         }
@@ -95,6 +93,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // start app and execute render loop
     let mut app = AppState::init(&parsed_cfg.name)?;
+    app.set_query(
+        r#"
+    query {
+        field1,
+        field2
+    }
+    "#
+        .to_string(),
+    );
 
     let _ = run_app(&mut terminal, &mut app, gql_client).await;
 
