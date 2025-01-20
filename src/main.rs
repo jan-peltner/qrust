@@ -1,6 +1,5 @@
 use app::AppState;
 use client::GqlClient;
-use events::handle_events;
 use ratatui::crossterm::event::{DisableMouseCapture, EnableMouseCapture};
 use ratatui::crossterm::execute;
 use ratatui::crossterm::terminal::{
@@ -9,16 +8,11 @@ use ratatui::crossterm::terminal::{
 use ratatui::prelude::*;
 use ratatui::Terminal;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
-use reqwest::Response;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs::read_to_string;
-use std::future::Future;
-use std::pin::Pin;
-use std::task::Poll;
 use std::{env, io};
-use ui::compute_ui;
 
 mod app;
 mod client;
@@ -39,36 +33,6 @@ impl Config {
             header_map.try_insert(HeaderName::try_from(k)?, HeaderValue::try_from(v)?)?;
         }
         Ok(header_map)
-    }
-}
-
-async fn run_app<B: Backend>(
-    terminal: &mut Terminal<B>,
-    app: &mut AppState<'_>,
-    gql_client: GqlClient<'_>,
-) -> io::Result<()> {
-    let mut maybe_request: Option<Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>> =
-        None;
-
-    loop {
-        terminal.draw(|f| compute_ui(f, app, &gql_client))?;
-        if let Some(req) = handle_events(app, &gql_client) {
-            maybe_request = Some(req);
-        }
-
-        if let Some(ref mut req) = maybe_request {
-            if let Poll::Ready(result) = futures::poll!(req) {
-                if result.is_ok() {
-                    todo!("handle successful request")
-                } else {
-                    todo!("handle failed request")
-                }
-            }
-        }
-
-        if app.should_quit {
-            return Ok(());
-        }
     }
 }
 
@@ -103,7 +67,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .to_string(),
     );
 
-    let _ = run_app(&mut terminal, &mut app, gql_client).await;
+    let _ = app.run(&mut terminal, gql_client).await;
 
     // clean up after app is done
     // this is run even if `run_app` returns an error
