@@ -17,10 +17,12 @@ pub fn handle_events(
             KeyCode::Char(char) => {
                 if key.modifiers == KeyModifiers::CONTROL && (char == 'q' || char == 'c') {
                     app.should_quit = true;
-                    return None;
                 }
             }
             KeyCode::Backspace => {}
+            KeyCode::Tab => {
+                app.handle_focus_transition();
+            }
             KeyCode::Enter => {
                 if let Ok(request) = client.build_request(app.query.as_str()) {
                     return Some(Box::pin(request.send()));

@@ -7,7 +7,7 @@ use crate::Config;
 
 pub struct GqlClient<'a> {
     core_client: ReqwestClient,
-    endpoint: &'a str,
+    pub endpoint: &'a str,
 }
 
 #[derive(Serialize)]

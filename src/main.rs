@@ -17,7 +17,6 @@ use std::fs::read_to_string;
 use std::future::Future;
 use std::pin::Pin;
 use std::task::Poll;
-use std::time::Duration;
 use std::{env, io};
 use ui::compute_ui;
 
@@ -52,7 +51,7 @@ async fn run_app<B: Backend>(
         None;
 
     loop {
-        terminal.draw(|f| compute_ui(f, app))?;
+        terminal.draw(|f| compute_ui(f, app, &gql_client))?;
         if let Some(req) = handle_events(app, &gql_client) {
             maybe_request = Some(req);
         }

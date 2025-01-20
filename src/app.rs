@@ -1,28 +1,28 @@
-use reqwest::header::HeaderMap;
-use reqwest::Url;
 use url::ParseError;
 
 pub trait AsStaticStr {
     fn as_static_str(&self) -> &'static str;
 }
 
-pub enum UiMode {
-    NORMAL,
-    INSERT,
+/// state machine that handles the ui focus
+#[derive(PartialEq)]
+pub enum Focus {
+    QueryEditor,
+    ResponseView,
 }
 
-impl AsStaticStr for UiMode {
+impl AsStaticStr for Focus {
     fn as_static_str(&self) -> &'static str {
         match self {
-            UiMode::NORMAL => "SELECT",
-            UiMode::INSERT => "EDIT",
+            Focus::QueryEditor => "QUERY EDITOR",
+            Focus::ResponseView => "RESPONSE VIEW",
         }
     }
 }
 
 pub struct AppState<'a> {
     pub name: &'a str,
-    pub mode: UiMode,
+    pub focus: Focus,
     pub query: String,
     pub response: Option<String>,
     pub should_quit: bool,
@@ -33,18 +33,17 @@ impl<'a> AppState<'a> {
     pub fn init(name: &'a str) -> Result<Self, ParseError> {
         Ok(Self {
             name,
-            mode: UiMode::NORMAL,
+            focus: Focus::QueryEditor,
             query: String::default(),
             response: None,
             should_quit: false,
         })
     }
 
-    /// Toggle UI between NORMAL and INSERT mode
-    pub fn toggle_ui_mode(&mut self) {
-        match self.mode {
-            UiMode::INSERT => self.mode = UiMode::NORMAL,
-            UiMode::NORMAL => self.mode = UiMode::INSERT,
+    pub fn handle_focus_transition(&mut self) {
+        match self.focus {
+            Focus::QueryEditor => self.focus = Focus::ResponseView,
+            Focus::ResponseView => self.focus = Focus::QueryEditor,
         }
     }
 }
