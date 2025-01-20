@@ -18,17 +18,17 @@ pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
     let query_editor_block = Block::bordered()
         .border_type(ratatui::widgets::BorderType::Rounded)
         .style(Style::default().fg(if app.focus == Focus::QueryEditor {
-            Color::White
-        } else {
             Color::LightCyan
+        } else {
+            Color::White
         }));
 
     let response_view_block = Block::bordered()
         .border_type(ratatui::widgets::BorderType::Rounded)
         .style(Style::default().fg(if app.focus == Focus::ResponseView {
-            Color::White
-        } else {
             Color::LightCyan
+        } else {
+            Color::White
         }));
 
     frame.render_widget(query_editor_block, main_chunks[0]);
