@@ -34,7 +34,7 @@ pub struct AppState<'a> {
     pub name: &'a str,
     pub focus: Focus,
     pub query: String,
-    pub response: Option<String>,
+    pub response: String,
     pub should_quit: bool,
 }
 
@@ -45,7 +45,7 @@ impl<'a> AppState<'a> {
             name,
             focus: Focus::QueryEditor,
             query: String::default(),
-            response: None,
+            response: String::new(),
             should_quit: false,
         })
     }
@@ -78,10 +78,10 @@ impl<'a> AppState<'a> {
 
             if let Some(ref mut req) = maybe_request {
                 if let Poll::Ready(result) = futures::poll!(req) {
-                    if result.is_ok() {
-                        todo!("handle successful request")
+                    if let Ok(res) = result {
+                        self.response = res.text().await.unwrap();
                     } else {
-                        todo!("handle failed request")
+                        todo!("handle failed response")
                     }
                 }
             }

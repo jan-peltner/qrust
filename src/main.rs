@@ -60,8 +60,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     app.set_query(
         r#"
     query {
-        field1,
-        field2
+        capsule {
+            id
+        }
     }
     "#
         .to_string(),
