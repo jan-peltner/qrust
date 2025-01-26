@@ -26,6 +26,7 @@ pub fn handle_events(
                 }
                 KeyCode::Enter => {
                     if let Ok(request) = client.build_request(app.query.as_str()) {
+                        dbg!(&request);
                         return Some(Box::pin(request.send()));
                     }
                 }

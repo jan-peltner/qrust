@@ -40,9 +40,9 @@ impl Config {
 async fn main() -> Result<(), Box<dyn Error>> {
     // prepare terminal
     enable_raw_mode()?;
-    let mut stderr = io::stderr();
-    execute!(stderr, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stderr);
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+    let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
     // parse qrust config
@@ -60,9 +60,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     app.set_query(
         r#"
     query {
-        capsule {
-            id
-        }
+      company {
+        ceo
+      }
     }
     "#
         .to_string(),

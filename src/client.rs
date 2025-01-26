@@ -1,4 +1,4 @@
-use reqwest::{Client as ReqwestClient, Method, RequestBuilder};
+use reqwest::{header::HeaderValue, Client as ReqwestClient, Method, RequestBuilder};
 use serde::Serialize;
 use serde_json::Result as SerdeJsonResult;
 use std::{collections::HashMap, error::Error};
@@ -19,9 +19,12 @@ struct GqlRequestBody<'a> {
 impl<'a> GqlClient<'a> {
     pub fn from_config(config: &'a Config) -> Result<Self, Box<dyn Error>> {
         let builder = ReqwestClient::builder();
-        let rwc = builder.default_headers(config.to_header_map()?).build()?;
+        let mut header_map = config.to_header_map()?;
+        header_map.insert("Content-Type", HeaderValue::from_str("application/json")?);
+
+        let rqc = builder.default_headers(header_map).build()?;
         Ok(Self {
-            core_client: rwc,
+            core_client: rqc,
             endpoint: &config.endpoint,
         })
     }

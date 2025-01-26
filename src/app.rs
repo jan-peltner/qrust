@@ -80,12 +80,12 @@ impl<'a> AppState<'a> {
                 if let Poll::Ready(result) = futures::poll!(req) {
                     if let Ok(res) = result {
                         self.response = res.text().await.unwrap();
+                        maybe_request = None;
                     } else {
                         todo!("handle failed response")
                     }
                 }
-            }
-
+            };
             if self.should_quit {
                 return Ok(());
             }
