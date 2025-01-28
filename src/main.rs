@@ -19,7 +19,7 @@ mod app;
 mod client;
 mod events;
 mod parser;
-mod ui;
+mod tui;
 
 #[derive(Deserialize)]
 struct Config {

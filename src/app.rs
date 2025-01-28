@@ -1,7 +1,7 @@
 use crate::client::GqlClient;
 use crate::events::handle_events;
 use crate::parser::QueryParser;
-use crate::ui::compute_ui;
+use crate::tui::compute_ui;
 use graphql_parser::Pos;
 use ratatui::prelude::*;
 use ratatui::Terminal;
@@ -78,11 +78,13 @@ impl<'a, 'query> App<'a> {
             Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>,
         > = None;
 
-        let query_parser: QueryParser;
+        let mut query_parser: QueryParser;
+
         // parse and format the initial query
         if let Ok(formatted_query) = QueryParser::parse_and_serialize(self.query.as_str()) {
             self.set_query(formatted_query);
             query_parser = QueryParser::from_query_str(self.query.as_str());
+            query_parser.set_operation();
         } else {
             todo!()
         }
