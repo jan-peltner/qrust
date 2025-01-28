@@ -1,5 +1,6 @@
-use app::AppState;
+use app::App;
 use client::GqlClient;
+use graphql_parser::parse_schema;
 use ratatui::crossterm::event::{DisableMouseCapture, EnableMouseCapture};
 use ratatui::crossterm::execute;
 use ratatui::crossterm::terminal::{
@@ -17,6 +18,7 @@ use std::{env, io};
 mod app;
 mod client;
 mod events;
+mod parser;
 mod ui;
 
 #[derive(Deserialize)]
@@ -52,21 +54,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
     ))?;
     let parsed_cfg = serde_json::from_str::<Config>(&cfg)?;
 
+    // let schema = read_to_string(format!(
+    //     "{}/.config/qrust/schema.graphql",
+    //     env::var("HOME").unwrap()
+    // ))?;
+    // let schema_ast = parse_schema::<String>(&schema);
+    // dbg!(&schema_ast);
+
     // construct GraphQL client
     let gql_client = GqlClient::from_config(&parsed_cfg)?;
 
     // start app and execute render loop
-    let mut app = AppState::init(&parsed_cfg.name)?;
-    app.set_query(
-        r#"
-    query {
-      company {
-        ceo
-      }
-    }
-    "#
-        .to_string(),
-    );
+    let mut app = App::init(&parsed_cfg.name)?;
+    app.set_query("query { company { ceo } }".to_string());
 
     let _ = app.run(&mut terminal, gql_client).await;
 

@@ -1,6 +1,8 @@
 use crate::client::GqlClient;
 use crate::events::handle_events;
+use crate::parser::QueryParser;
 use crate::ui::compute_ui;
+use graphql_parser::Pos;
 use ratatui::prelude::*;
 use ratatui::Terminal;
 use reqwest::Response;
@@ -8,7 +10,7 @@ use std::future::Future;
 use std::io;
 use std::pin::Pin;
 use std::task::Poll;
-use url::ParseError;
+use url::ParseError as UrlParseError;
 
 pub trait AsStaticStr {
     fn as_static_str(&self) -> &'static str;
@@ -30,21 +32,23 @@ impl AsStaticStr for Focus {
     }
 }
 
-pub struct AppState<'a> {
+pub struct App<'a> {
     pub name: &'a str,
     pub focus: Focus,
     pub query: String,
+    pub query_cursor: Pos,
     pub response: String,
     pub should_quit: bool,
 }
 
-impl<'a> AppState<'a> {
+impl<'a, 'query> App<'a> {
     /// Initializes the app state
-    pub fn init(name: &'a str) -> Result<Self, ParseError> {
+    pub fn init(name: &'a str) -> Result<Self, UrlParseError> {
         Ok(Self {
             name,
             focus: Focus::QueryEditor,
             query: String::default(),
+            query_cursor: Pos { column: 1, line: 1 },
             response: String::new(),
             should_quit: false,
         })
@@ -61,6 +65,10 @@ impl<'a> AppState<'a> {
         self.query = input;
     }
 
+    // pub fn parse_query(&mut self) {
+    //     self.query_ast = parse_query(self.query.as_str());
+    // }
+
     pub async fn run<B: Backend>(
         &mut self,
         terminal: &mut Terminal<B>,
@@ -70,6 +78,16 @@ impl<'a> AppState<'a> {
             Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>,
         > = None;
 
+        let query_parser: QueryParser;
+        // parse and format the initial query
+        if let Ok(formatted_query) = QueryParser::parse_and_serialize(self.query.as_str()) {
+            self.set_query(formatted_query);
+            query_parser = QueryParser::from_query_str(self.query.as_str());
+        } else {
+            todo!()
+        }
+
+        dbg!(&query_parser);
         loop {
             terminal.draw(|f| compute_ui(f, self, &gql_client))?;
             if let Some(req) = handle_events(self, &gql_client) {

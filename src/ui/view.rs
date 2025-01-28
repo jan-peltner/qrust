@@ -4,13 +4,13 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style, Stylize},
     text::Text,
-    widgets::{Block, Paragraph},
+    widgets::{Block, Padding, Paragraph},
     Frame,
 };
 
-use crate::app::{AppState, Focus};
+use crate::app::{App, Focus};
 
-pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
+pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &App) {
     let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(vec![Constraint::Fill(1), Constraint::Fill(1)])
@@ -22,7 +22,8 @@ pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
             Color::LightCyan
         } else {
             Color::White
-        }));
+        }))
+        .padding(Padding::proportional(1));
 
     let query_editor = Paragraph::new(Text::raw(&app.query).white()).block(query_editor_block);
 
@@ -32,7 +33,8 @@ pub fn render_app_content(outlet: Rc<Rect>, frame: &mut Frame, app: &AppState) {
             Color::LightCyan
         } else {
             Color::White
-        }));
+        }))
+        .padding(Padding::proportional(1));
 
     let response_view = Paragraph::new(Text::raw(&app.response).white()).block(response_view_block);
 

@@ -3,10 +3,10 @@ use std::{future::Future, pin::Pin, time::Duration};
 use ratatui::crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
 use reqwest::Response;
 
-use crate::{app::AppState, client::GqlClient};
+use crate::{app::App, client::GqlClient};
 
 pub fn handle_events(
-    app: &mut AppState<'_>,
+    app: &mut App<'_>,
     client: &GqlClient<'_>,
 ) -> Option<Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>> {
     if is_event_available() {
@@ -26,7 +26,6 @@ pub fn handle_events(
                 }
                 KeyCode::Enter => {
                     if let Ok(request) = client.build_request(app.query.as_str()) {
-                        dbg!(&request);
                         return Some(Box::pin(request.send()));
                     }
                 }

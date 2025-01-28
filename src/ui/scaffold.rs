@@ -1,4 +1,4 @@
-use crate::{app::AsStaticStr, client::GqlClient, AppState};
+use crate::{app::AsStaticStr, client::GqlClient, App};
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::Stylize,
@@ -11,7 +11,7 @@ use std::rc::Rc;
 pub fn render_app_scaffold(
     viewport: Rc<[Rect]>,
     frame: &mut Frame,
-    app: &AppState,
+    app: &App,
     gql_client: &GqlClient,
 ) -> Rc<Rect> {
     let header = *viewport.first().unwrap();
