@@ -2,7 +2,6 @@ use crate::client::GqlClient;
 use crate::events::handle_events;
 use crate::parser::QueryParser;
 use crate::tui::compute_ui;
-use graphql_parser::Pos;
 use ratatui::prelude::*;
 use ratatui::Terminal;
 use reqwest::Response;
@@ -36,7 +35,6 @@ pub struct App<'a> {
     pub name: &'a str,
     pub focus: Focus,
     pub query: String,
-    pub query_cursor: Pos,
     pub response: String,
     pub should_quit: bool,
 }
@@ -48,7 +46,6 @@ impl<'a, 'query> App<'a> {
             name,
             focus: Focus::QueryEditor,
             query: String::default(),
-            query_cursor: Pos { column: 1, line: 1 },
             response: String::new(),
             should_quit: false,
         })
