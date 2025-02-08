@@ -5,8 +5,8 @@ use crate::tui::compute_ui;
 use ratatui::prelude::*;
 use ratatui::Terminal;
 use reqwest::Response;
+use std::error::Error;
 use std::future::Future;
-use std::io;
 use std::pin::Pin;
 use std::task::Poll;
 use url::ParseError as UrlParseError;
@@ -70,18 +70,17 @@ impl<'a, 'query> App<'a> {
         &mut self,
         terminal: &mut Terminal<B>,
         gql_client: GqlClient<'_>,
-    ) -> io::Result<()> {
+    ) -> Result<(), Box<dyn Error>> {
         let mut maybe_request: Option<
             Pin<Box<dyn Future<Output = Result<Response, reqwest::Error>>>>,
         > = None;
 
-        let mut query_parser: QueryParser;
+        let query_parser: QueryParser;
 
         // parse and format the initial query
         if let Ok(formatted_query) = QueryParser::parse_and_serialize(self.query.as_str()) {
             self.set_query(formatted_query);
-            query_parser = QueryParser::from_query_str(self.query.as_str());
-            query_parser.set_operation();
+            query_parser = QueryParser::from_query_str(self.query.as_str())?;
         } else {
             todo!()
         }
