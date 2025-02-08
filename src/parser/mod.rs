@@ -20,6 +20,9 @@ pub struct QueryParser<'a> {
 }
 
 impl<'a> QueryParser<'a> {
+    /// This constructor truncates the Document that's returned from `graphql_parser::parse_query`.
+    /// It only handles one Query or Mutation at a time. Subscription operations are not supported as
+    /// of now.
     pub fn from_query_str(query: &'a str) -> Result<Self, Box<dyn Error>> {
         let ast = parse_query(query)?;
 
