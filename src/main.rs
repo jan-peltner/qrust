@@ -66,7 +66,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // start app and execute render loop
     let mut app = App::init(&parsed_cfg.name)?;
-    app.set_query("query { company { ceo } }".to_string());
+    app.set_query("query { company(first: 10) { ceo pm } }".to_string());
 
     let _ = app.run(&mut terminal, gql_client).await;
 

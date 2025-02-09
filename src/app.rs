@@ -2,6 +2,7 @@ use crate::client::GqlClient;
 use crate::events::handle_events;
 use crate::parser::QueryParser;
 use crate::tui::compute_ui;
+use graphql_parser::query::Selection;
 use ratatui::prelude::*;
 use ratatui::Terminal;
 use reqwest::Response;
@@ -39,7 +40,7 @@ pub struct App<'a> {
     pub should_quit: bool,
 }
 
-impl<'a, 'query> App<'a> {
+impl<'a> App<'a> {
     /// Initializes the app state
     pub fn init(name: &'a str) -> Result<Self, UrlParseError> {
         Ok(Self {
@@ -84,6 +85,7 @@ impl<'a, 'query> App<'a> {
         } else {
             todo!()
         }
+        let selected = query_parser.get_first_selectable();
 
         dbg!(&query_parser);
         loop {

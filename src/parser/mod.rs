@@ -4,6 +4,7 @@ use graphql_parser::query::Mutation;
 use graphql_parser::query::OperationDefinition;
 use graphql_parser::query::ParseError as QueryParseError;
 use graphql_parser::query::Query;
+use graphql_parser::query::Selection;
 use graphql_parser::Style;
 use std::error::Error;
 
@@ -16,7 +17,6 @@ enum Operation<'a> {
 #[derive(Debug)]
 pub struct QueryParser<'a> {
     operation: Operation<'a>,
-    cursor_path: Vec<usize>,
 }
 
 impl<'a> QueryParser<'a> {
@@ -43,13 +43,21 @@ impl<'a> QueryParser<'a> {
             _ => return Err("First definition must be an operation".into()),
         };
 
-        Ok(Self {
-            operation,
-            cursor_path: vec![],
-        })
+        Ok(Self { operation })
     }
 
     pub fn parse_and_serialize(query: &str) -> Result<String, QueryParseError> {
         Ok(parse_query::<String>(query)?.format(&Style::default().indent(4)))
+    }
+
+    pub fn get_first_selectable(&'a self) -> Option<&'a Selection<'a, &'a str>> {
+        let selection_set = match &self.operation {
+            Operation::Query(q) => &q.selection_set,
+            Operation::Mutation(m) => &m.selection_set,
+        };
+        if selection_set.items.is_empty() {
+            return None;
+        }
+        Some(selection_set.items.first().unwrap())
     }
 }
